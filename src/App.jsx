@@ -162,7 +162,7 @@ export default function App() {
     location: "India",
     email: "omsiva.karthik.2002@gmail.com",
     github: "https://github.com/Sivakarthik1912",
-    linkedin: "www.linkedin.com/in/karthikeyan-v-62324b208",
+    linkedin: "https://www.linkedin.com/in/karthikeyan-v-62324b208",
     summary:
       "Java developer focused on building clean, scalable web applications with Spring Boot, REST APIs, and modern front-end integration.",
   };
