@@ -7,6 +7,14 @@ export default defineConfig({
   server: {
     host: true,
     port: process.env.PORT || 3000,
+    proxy: {
+      // Proxy API requests to backend running on localhost:5000
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   preview: {
     host: true,
