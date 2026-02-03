@@ -241,6 +241,39 @@ export default function App() {
     },
   ];
 
+  // Contact form state
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [sending, setSending] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setSending(true);
+    setSuccess("");
+    setError("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Request failed with status ${res.status}`);
+      }
+
+      setSuccess("Message sent — I'll get back to you soon.");
+      setForm({ name: "", email: "", subject: "", message: "" });
+    } catch (err) {
+      setError(err.message || "Failed to send message");
+    } finally {
+      setSending(false);
+    }
+  }
+
   return (
     <div className="app">
       <BackgroundFX />
@@ -537,22 +570,46 @@ export default function App() {
           <div className="grid2">
             <Card className="contactCard">
               <h3>Message me</h3>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  alert("This is a UI demo. Connect it to backend/email if needed.");
-                }}
-                className="form"
-              >
+              <form onSubmit={handleSubmit} className="form">
                 <div className="row2">
-                  <input className="input" placeholder="Your name" required />
-                  <input className="input" placeholder="Your email" type="email" required />
+                  <input
+                    className="input"
+                    placeholder="Your name"
+                    required
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  />
+                  <input
+                    className="input"
+                    placeholder="Your email"
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  />
                 </div>
-                <input className="input" placeholder="Subject" required />
-                <textarea className="input" placeholder="Message" rows={5} required />
-                <button className="primaryBtn big" type="submit">
-                  Send Message
-                </button>
+                <input
+                  className="input"
+                  placeholder="Subject"
+                  required
+                  value={form.subject}
+                  onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                />
+                <textarea
+                  className="input"
+                  placeholder="Message"
+                  rows={5}
+                  required
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                />
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                  <button className="primaryBtn big" type="submit" disabled={sending}>
+                    {sending ? "Sending…" : "Send Message"}
+                  </button>
+                  {success && <div className="muted">{success}</div>}
+                  {error && <div style={{ color: "#ff6666" }}>{error}</div>}
+                </div>
               </form>
             </Card>
 
